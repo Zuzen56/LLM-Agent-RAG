@@ -1,5 +1,5 @@
 from openai import OpenAI
-
+#deepseek的api
 client = OpenAI(
     base_url='http://localhost:11434/v1/',
 
