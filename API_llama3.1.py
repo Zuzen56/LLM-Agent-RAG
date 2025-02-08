@@ -14,9 +14,7 @@ chat_completion = client.chat.completions.create(
             'content': '你好，你是谁？',
         }
     ],
-    model='deepseek-r1:14b',
+    model='llama3.1:latest',
 )
 
 print(chat_completion.choices[0].message.content)
-
-
