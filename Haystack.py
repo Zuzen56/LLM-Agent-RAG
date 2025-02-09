@@ -1,39 +1,30 @@
 import os
-from haystack import Pipeline, PredefinedPipeline
-from openai import OpenAI
+from haystack.document_stores import InMemoryDocumentStore
+from haystack.pipelines.standard_pipelines import TextIndexingPipeline
+from haystack.nodes import BM25Retriever
+from haystack.nodes import FARMReader
+from haystack.pipelines import ExtractiveQAPipeline
+from pprint import pprint
+from haystack.utils import print_answers
 
-# 设置本地模型的API密钥和URL
-os.environ["OPENAI_API_KEY"] = "ollama"
-base_url = 'http://localhost:11434/v1/'
+document_store = InMemoryDocumentStore(use_bm25=True)
 
-# 使用本地文件路径
-local_file_path = "davinci.txt"
+doc_dir = "data/build_your_first_question_answering_system"
 
-# #测试文件是否能正常读取
-# with open(local_file_path,"r",encoding="utf-8") as f:
-#     text = f.read()
-#     print(text)
+files_to_index = [doc_dir + "/" + f for f in os.listdir(doc_dir)]
+indexing_pipeline = TextIndexingPipeline(document_store)
+indexing_pipeline.run_batch(file_paths=files_to_index)
 
-# 创建索引管道
-indexing_pipeline = Pipeline.from_template(PredefinedPipeline.INDEXING)
-indexing_pipeline.run(data={"sources": [local_file_path]})
+retriever = BM25Retriever(document_store=document_store)
 
-# 创建RAG管道
-rag_pipeline = Pipeline.from_template(PredefinedPipeline.RAG)
+reader = FARMReader(model_name_or_path="deepset/roberta-base-squad2", use_gpu=True)
 
-# 查询
-query = "How old was he when he died?"
-result = rag_pipeline.run(data={"prompt_builder": {"query": query}, "text_embedder": {"text": query}})
+pipe = ExtractiveQAPipeline(reader, retriever)
 
-# 调用本地模型
-client = OpenAI(base_url=base_url, api_key=os.getenv('OPENAI_API_KEY'))
-
-response = client.chat.completions.create(
-    model="deepseek-r1:14b",
-    messages=[
-        {"role": "system", "content": "You are a helpful assistant"},
-        {"role": "user", "content": query},
-    ]
+prediction = pipe.run(
+    query="Who is the father of Arya Stark?", params={"Retriever": {"top_k": 10}, "Reader": {"top_k": 5}}
 )
 
-print(response.choices[0].message.content)
+pprint(prediction)
+
+print_answers(prediction, details="minimum")  ## Choose from `minimum`, `medium`, and `all`
