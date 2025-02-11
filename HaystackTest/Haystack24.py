@@ -2,6 +2,7 @@ import os
 from getpass import getpass
 
 model_api_key = os.getenv("HF_API_KEY", None) or getpass("Enter HF API key:")
+print(os.getenv("HF_API_KEY"))
 
 from haystack.nodes import PromptNode
 

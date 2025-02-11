@@ -14,10 +14,13 @@ from haystack.nodes import BM25Retriever
 
 retriever = BM25Retriever(document_store=document_store, top_k=2)
 
+# import os
+# from getpass import getpass
+# openai_api_key = os.getenv("OPENAI_API_KEY", None) or getpass("Enter OpenAI API key:")
+
 import os
 from getpass import getpass
-
-openai_api_key = os.getenv("OPENAI_API_KEY", None) or getpass("Enter OpenAI API key:")
+model_api_key = os.getenv("HF_API_KEY", None) or getpass("Enter HF API key:")
 
 
 from haystack.nodes import PromptNode, PromptTemplate, AnswerParser
@@ -30,7 +33,11 @@ rag_prompt = PromptTemplate(
     output_parser=AnswerParser(),
 )
 
-prompt_node = PromptNode(model_name_or_path="gpt-3.5-turbo", api_key=openai_api_key, default_prompt_template=rag_prompt)
+# prompt_node = PromptNode(model_name_or_path="gpt-3.5-turbo", api_key=openai_api_key, default_prompt_template=rag_prompt)
+
+prompt_node = PromptNode(
+    model_name_or_path="deepseek-ai/DeepSeek-R1-Distill-Qwen-32B", api_key=model_api_key, default_prompt_template=rag_prompt
+)
 
 
 from haystack.pipelines import Pipeline

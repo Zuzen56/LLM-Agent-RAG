@@ -23,15 +23,23 @@ result = presidents_qa.run("What year was the 1st president of the USA born?")
 
 print_answers(result, "minimum")
 
+# import os
+# from getpass import getpass
+#
+# api_key = os.getenv("OPENAI_API_KEY", None) or getpass("Enter OpenAI API key:")
+
 import os
 from getpass import getpass
-
-api_key = os.getenv("OPENAI_API_KEY", None) or getpass("Enter OpenAI API key:")
+api_key = os.getenv("HF_API_KEY", None) or getpass("Enter HF API key:")
 
 from haystack.agents import Agent
 from haystack.nodes import PromptNode
 
-prompt_node = PromptNode(model_name_or_path="gpt-3.5-turbo-instruct", api_key=api_key, stop_words=["Observation:"])
+# prompt_node = PromptNode(model_name_or_path="gpt-3.5-turbo-instruct", api_key=api_key, stop_words=["Observation:"])
+prompt_node = PromptNode(
+    model_name_or_path="deepseek-ai/DeepSeek-R1-Distill-Qwen-32B", api_key=api_key, stop_words=["Observation:"]
+)
+
 agent = Agent(prompt_node=prompt_node)
 
 
