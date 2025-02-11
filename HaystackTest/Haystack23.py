@@ -1,4 +1,3 @@
-
 from haystack.document_stores import InMemoryDocumentStore
 from datasets import load_dataset
 
