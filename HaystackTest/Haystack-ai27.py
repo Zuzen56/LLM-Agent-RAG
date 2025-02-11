@@ -47,11 +47,15 @@ prompt_builder = ChatPromptBuilder(template=template)
 
 import os
 from getpass import getpass
-#from haystack.components.generators.chat import HuggingFaceChatGenerator
-from haystack.components.generators.chat import HuggingFaceLocalChatGenerator
+from haystack.utils import Secret
+from haystack.components.generators.chat import HuggingFaceTGIChatGenerator
+print("suceess!")
 
-chat_generator = HuggingFaceLocalChatGenerator(model="deepseek-ai/DeepSeek-R1-Distill-Qwen-32B")
-#chat_generator = HuggingFaceChatGenerator(model="deepseek-ai/DeepSeek-R1-Distill-Qwen-32B")
+api_key = os.getenv("HF_API_KEY", None) or getpass("Enter HF API key:")
+
+chat_generator = HuggingFaceTGIChatGenerator(model="deepseek-ai/DeepSeek-R1-Distill-Qwen-32B",token=Secret.from_token(api_key))
+print("suceess!")
+
 
 from haystack import Pipeline
 
@@ -70,4 +74,5 @@ question = "What does Rhodes Statue look like?"
 
 response = basic_rag_pipeline.run({"text_embedder": {"text": question}, "prompt_builder": {"question": question}})
 
-print(response["llm"]["replies"][0].text)
+
+print(response["llm"]["replies"][0].content)
