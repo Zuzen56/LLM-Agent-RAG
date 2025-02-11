@@ -99,4 +99,7 @@ question = (
     "What ingredients would I need to make vegan keto eggplant lasagna, vegan persimmon flan, and vegan hemp cheese?"
 )
 
+#pipe.draw("auto-correct-pipeline30.png")
+
 pipe.run({"embedder": {"text": question}, "chat_prompt_builder": {"question": question}})
+print("?")
