@@ -49,12 +49,11 @@ import os
 from getpass import getpass
 from haystack.utils import Secret
 from haystack.components.generators.chat import HuggingFaceTGIChatGenerator
-print("suceess!")
 
 api_key = os.getenv("HF_API_KEY", None) or getpass("Enter HF API key:")
 
 chat_generator = HuggingFaceTGIChatGenerator(model="deepseek-ai/DeepSeek-R1-Distill-Qwen-32B",token=Secret.from_token(api_key))
-print("suceess!")
+
 
 
 from haystack import Pipeline
