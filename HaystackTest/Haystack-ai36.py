@@ -1,10 +1,21 @@
-from getpass import getpass
-import os
+#此文件在result内容输出有问题
+#猜测可能是qwen模型调用时多了一个参数，或者promt文本内容格式有问题
 
-if "HF_API_KEY" not in os.environ:
-    os.environ["HF_API_KEY"] = getpass("Enter HF API key:")
-if "SERPERDEV_API_KEY" not in os.environ:
-    os.environ["SERPERDEV_API_KEY"] = getpass("Enter Serper Api key: ")
+import os
+from getpass import getpass
+from haystack.components.builders import AnswerBuilder
+from haystack.dataclasses import ChatMessage
+from haystack.components.embedders import SentenceTransformersTextEmbedder
+from haystack.components.retrievers.in_memory import InMemoryEmbeddingRetriever
+
+
+from haystack.utils import Secret
+
+
+HF_api_key = os.getenv("HF_API_KEY", None) or getpass("Enter HF API key:")
+Serper_api_key = os.getenv("SERPERDEV_API_KEY", None) or getpass("Enter Serper API key:")
+
+
 
 from haystack.dataclasses import Document
 
@@ -43,7 +54,7 @@ Documents:
 ]
 
 prompt_builder = ChatPromptBuilder(template=prompt_template)
-llm = HuggingFaceTGIChatGenerator(model="Qwen/Qwen2.5-72B-Instruct")
+llm = HuggingFaceTGIChatGenerator(model="Qwen/Qwen2.5-72B-Instruct",token=Secret.from_token(HF_api_key))
 
 from haystack.components.websearch.serper_dev import SerperDevWebSearch
 
@@ -62,9 +73,10 @@ Documents:
     )
 ]
 
-websearch = SerperDevWebSearch()
+websearch = SerperDevWebSearch(api_key=Secret.from_token(Serper_api_key))
+
 prompt_builder_for_websearch = ChatPromptBuilder(template=prompt_for_websearch)
-llm_for_websearch = HuggingFaceTGIChatGenerator(model="Qwen/Qwen2.5-72B-Instruct")
+llm_for_websearch = HuggingFaceTGIChatGenerator(model="Qwen/Qwen2.5-72B-Instruct",token=Secret.from_token(HF_api_key))
 
 from haystack.components.routers import ConditionalRouter
 
