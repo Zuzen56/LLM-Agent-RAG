@@ -102,4 +102,4 @@ question = (
 #pipe.draw("auto-correct-pipeline30.png")
 
 prediction = pipe.run({"embedder": {"text": question}, "chat_prompt_builder": {"question": question}})
-print(prediction["llm"]["answers"][0].content)
+print(prediction["llm"]["replies"][0].content)
