@@ -1,3 +1,7 @@
+#此文件在131行左右有问题，需要修改
+#问题原因是llm_evaluator.py文件中的代码默认调用openai的api，需要修改为调用huggingface的api
+#以后用到了再改吧，或者想办法搞个openai 的token
+
 from datasets import load_dataset
 from haystack import Document
 
