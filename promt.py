@@ -63,6 +63,7 @@ response_format_prompt = """
         "speak": "当前步骤返回给用户的总结",
         "reasoning": "推理",
     },
+    "observation": "观察当前任务的整体进展。"
 }
 
 """
@@ -85,3 +86,6 @@ def gen_prompt(query, agent_scratch):
         response_format_prompt=response_format_prompt
     )
     return prompt
+
+
+user_promt = "根据给定的目标和迄今为止取得的进展，确定下一个要执行的action，并使用前面指定的json模式进行响应。"

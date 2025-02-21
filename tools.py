@@ -51,6 +51,7 @@ def search(query):
             "content": "",
         }]
         """
+        print("search ret:",ret)
         content_list = [obj["content"] for obj in ret]
         return "\n".join(content_list)
 
@@ -112,7 +113,18 @@ tools_info = [
             "type": "string",
             "description": "search query to look up"
         }]
-    }
+    },
+
+    {
+        "name": "finish",
+        "description": "完成用户目标",
+        "args": [{
+            "name": "answer",
+            "type": "string",
+            "description": "最后的目标结果"
+        }]
+    },
+
 ]
 
 
@@ -134,8 +146,8 @@ def gen_tools_desc():
                 "description": info["description"]
             })
         args_desc = json.dumps(args_desc, ensure_ascii=False)
-        tools_desc = f"{idx+1}. {t['name']}: {t['description']}, args: {args_desc}"
-        tools_desc.append(tools_desc)
+        tool_desc = f"{idx+1}. {t['name']}: {t['description']}, args: {args_desc}"
+        tools_desc.append(tool_desc)
     tools_prompt = "\n".join(tools_desc)
     return tools_prompt
 
